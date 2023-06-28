@@ -1,0 +1,5 @@
+# ignores all .sql query files
+*.sql
+
+# ignores local .vscode folder
+.vscode/
