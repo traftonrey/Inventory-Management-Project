@@ -63,7 +63,7 @@ This is an Inventory Management System that allows you to manage inventory items
 
 7. Run the application.
 
-mvn spring-boot:run
+- mvn spring-boot:run
 
 8. The application will start running on `http://localhost:8080`.
 
