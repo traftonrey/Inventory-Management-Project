@@ -3,7 +3,12 @@ package com.skillstorm.traftonreynolds.project1traftonreynolds.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +21,9 @@ public class WarehouseService {
     @Autowired
     WarehouseRepository warehouseRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     /*
      * GET MAPPINGS
      */
@@ -24,15 +32,13 @@ public class WarehouseService {
         try {
             return warehouseRepository.findAll();
         } catch (Exception e) {
-            throw new RuntimeException("No warehouses found.");
+            throw new EntityNotFoundException("No warehouses found.");
         }
     }
 
     public Warehouse findWarehouseById(int id) {
-        if (!warehouseRepository.findById(id).isPresent()) {
-            throw new RuntimeException("Warehouse with ID " + id + " does not exist.");
-        }
-        return warehouseRepository.findById(id).get();
+        return warehouseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Warehouse with ID " + id + " does not exist."));
     }
     
     /*
@@ -42,7 +48,7 @@ public class WarehouseService {
     public Warehouse createWarehouse(Warehouse warehouse) {
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(warehouse.getWarehouseId());
         if (warehouseOptional.isPresent()) {
-            throw new RuntimeException("Warehouse with ID " + warehouse.getWarehouseId() + " already exists.");
+            throw new DuplicateKeyException("Warehouse with ID " + warehouse.getWarehouseId() + " already exists.");
         }
         return warehouseRepository.save(warehouse);
     }
@@ -54,7 +60,7 @@ public class WarehouseService {
     public Warehouse deleteWarehouse(Warehouse warehouse) {
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(warehouse.getWarehouseId());
         if (!warehouseOptional.isPresent()) {
-            throw new RuntimeException("Warehouse with ID " + warehouse.getWarehouseId() + " does not exist.");
+            throw new EntityNotFoundException("Warehouse with ID " + warehouse.getWarehouseId() + " does not exist.");
         }
         warehouseRepository.delete(warehouse);
         return warehouse;
@@ -68,7 +74,7 @@ public class WarehouseService {
     public int updateWarehouse(Warehouse warehouse, String newName, int newCapacity) {
         Optional<Warehouse> warehouseOptional = warehouseRepository.findById(warehouse.getWarehouseId());
         if (!warehouseOptional.isPresent()) {
-            throw new RuntimeException("Warehouse with ID " + warehouse.getWarehouseId() + " does not exist.");
+            throw new EntityNotFoundException("Warehouse with ID " + warehouse.getWarehouseId() + " does not exist.");
         }
 
         Warehouse existingWarehouse = warehouseOptional.get();
@@ -78,10 +84,18 @@ public class WarehouseService {
         }
         if (newCapacity > 0) {
             existingWarehouse.setMaximumCapacity(newCapacity);
+        } else {
+            throw new IllegalArgumentException("Capacity must be a positive integer.");
         }
 
         warehouseRepository.save(existingWarehouse);
 
         return 1;
+    }
+
+    @Transactional
+    public void updateCapacity(Warehouse warehouse, int newCapacity) {
+        warehouse.setMaximumCapacity(newCapacity);
+        entityManager.merge(warehouse);
     }
 }

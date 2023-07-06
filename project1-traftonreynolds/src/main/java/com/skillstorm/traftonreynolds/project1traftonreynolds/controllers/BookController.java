@@ -74,14 +74,14 @@ public class BookController {
      */
 
     @PutMapping("/book/{id}")
-    public ResponseEntity<Integer> updateMovie(@RequestBody Book book,
+    public ResponseEntity<Integer> updateBook(@RequestBody Book book,
                                                 @RequestParam(required = false) String newTitle,
                                                 @RequestParam(required = false) String newAuthor,
                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newPublishDate,
                                                 @RequestParam(required = false) String newIsbn
                                                 ) {
 
-        int updated = bookService.updateMovie(book, newTitle, newAuthor, newPublishDate, newIsbn);
+        int updated = bookService.updateBook(book, newTitle, newAuthor, newPublishDate, newIsbn);
         return new ResponseEntity<Integer>(updated, HttpStatus.OK);
     }
 }

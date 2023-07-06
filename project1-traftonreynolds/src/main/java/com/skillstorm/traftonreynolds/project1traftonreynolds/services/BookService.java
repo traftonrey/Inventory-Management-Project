@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.skillstorm.traftonreynolds.project1traftonreynolds.models.Book;
@@ -29,15 +31,13 @@ public class BookService {
         try {
             return bookRepository.findAll();
         } catch (Exception e) {
-            throw new RuntimeException("No books found.");
+            throw new EntityNotFoundException("No books found.");
         }
     }
 
     public Book findBookById(int id) {
-        if (!bookRepository.findById(id).isPresent()) {
-            throw new RuntimeException("Book with ID " + id + " does not exist.");
-        }
-        return bookRepository.findById(id).get();
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " does not exist."));
     }
 
     /*
@@ -47,7 +47,7 @@ public class BookService {
     public Book createBook(Book book) {
         Optional<Book> bookOptional = bookRepository.findByIsbn(book.getIsbn());
         if (bookOptional.isPresent()) {
-            throw new RuntimeException("Book with ISBN " + book.getIsbn() + " already exists.");
+            throw new DuplicateKeyException("Book with ISBN " + book.getIsbn() + " already exists.");
         }
         return bookRepository.save(book);
     }
@@ -59,7 +59,7 @@ public class BookService {
     public Book deleteBook(Book book) {
         Optional<Book> bookOptional = bookRepository.findByIsbn(book.getIsbn());
         if (!bookOptional.isPresent()) {
-            throw new RuntimeException("Book with ISBN " + book.getIsbn() + " does not exist.");
+            throw new EntityNotFoundException("Book with ISBN " + book.getIsbn() + " does not exist.");
         }
         bookRepository.delete(book);
         return book;
@@ -70,11 +70,11 @@ public class BookService {
      */
 
     @Transactional
-    public int updateMovie(Book book, String newTitle, String newAuthor, LocalDate newPublishDate, String newIsbn) {
+    public int updateBook(Book book, String newTitle, String newAuthor, LocalDate newPublishDate, String newIsbn) {
         // Retrieve the book from the database
         Optional<Book> existingBookOptional = bookRepository.findById(book.getBookId());
         if (!existingBookOptional.isPresent()) {
-            throw new RuntimeException("Book with ID " + book.getBookId() + " does not exist.");
+            throw new EntityNotFoundException("Book with ID " + book.getBookId() + " does not exist.");
         }
 
         Book existingBook = existingBookOptional.get();
