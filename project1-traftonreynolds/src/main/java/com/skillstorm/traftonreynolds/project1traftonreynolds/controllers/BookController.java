@@ -35,15 +35,17 @@ public class BookController {
     
     @GetMapping
     public ResponseEntity<List<Book>> findAllBooks() {
-        List<Book> books = bookService.findAllBooks();
 
+        // calling service method to find all books
+        List<Book> books = bookService.findAllBooks();
         return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
     }
 
     @GetMapping("/book/{id}")
     public ResponseEntity<Book> findBookById(@PathVariable int id) {
-        Book book = bookService.findBookById(id);
 
+        // calling service method to find book by id
+        Book book = bookService.findBookById(id);
         return new ResponseEntity<Book>(book, HttpStatus.OK);
     }
 
@@ -53,8 +55,9 @@ public class BookController {
 
     @PostMapping("/book")
     public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
-        Book savedBook = bookService.createBook(book);
 
+        // calling service method to create book
+        Book savedBook = bookService.createBook(book);
         return new ResponseEntity<Book>(savedBook, HttpStatus.CREATED);
     }
 
@@ -64,9 +67,10 @@ public class BookController {
 
     @DeleteMapping("/book/{id}")
     public ResponseEntity<Book> deleteBook(@RequestBody Book book) {
-        Book deletedBook = bookService.deleteBook(book);
 
-        return new ResponseEntity<Book>(deletedBook, HttpStatus.OK);
+        // calling service method to delete book
+        bookService.deleteBook(book);
+        return ResponseEntity.noContent().build();
     }
 
     /*
@@ -81,6 +85,7 @@ public class BookController {
                                                 @RequestParam(required = false) String newIsbn
                                                 ) {
 
+        // calling service method to update book
         int updated = bookService.updateBook(book, newTitle, newAuthor, newPublishDate, newIsbn);
         return new ResponseEntity<Integer>(updated, HttpStatus.OK);
     }

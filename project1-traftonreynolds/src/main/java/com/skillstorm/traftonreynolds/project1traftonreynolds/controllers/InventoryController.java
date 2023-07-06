@@ -4,17 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.skillstorm.traftonreynolds.project1traftonreynolds.models.Book;
 import com.skillstorm.traftonreynolds.project1traftonreynolds.models.Inventory;
-import com.skillstorm.traftonreynolds.project1traftonreynolds.models.InventoryId;
-import com.skillstorm.traftonreynolds.project1traftonreynolds.models.Warehouse;
 import com.skillstorm.traftonreynolds.project1traftonreynolds.repositories.InventoryRepository;
+import com.skillstorm.traftonreynolds.project1traftonreynolds.services.BookService;
 import com.skillstorm.traftonreynolds.project1traftonreynolds.services.InventoryService;
+import com.skillstorm.traftonreynolds.project1traftonreynolds.services.WarehouseService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/inventory")
@@ -26,51 +22,42 @@ public class InventoryController {
     @Autowired
     InventoryRepository inventoryRepository;
 
+    @Autowired
+    BookService bookService;
+
+    @Autowired
+    WarehouseService warehouseService;
+
     @GetMapping
     public ResponseEntity<List<Inventory>> getAllInventory() {
-        try {
-            List<Inventory> inventoryList = inventoryService.findAllInventory();
-            return new ResponseEntity<>(inventoryList, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting all inventory.", e);
-        }
+        
+        // calling service method to find all inventory
+        List<Inventory> inventoryList = inventoryService.findAllInventory();
+        return new ResponseEntity<>(inventoryList, HttpStatus.OK);
     }
 
     @GetMapping("/{bookId}/{warehouseId}")
     public ResponseEntity<Inventory> findInventoryByIds(@PathVariable int bookId, @PathVariable int warehouseId) {
-        InventoryId inventoryId = new InventoryId(bookId, warehouseId);
-        Optional<Inventory> optionalInventory = inventoryRepository.findById(inventoryId);
-        if (!optionalInventory.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Inventory with ID " + inventoryId + " does not exist.");
-        }
-        Inventory inventory = optionalInventory.get();
-        return ResponseEntity.ok(inventory);
+
+        // calling service method to find inventory by bookId and warehouseId
+        Inventory inventory = inventoryService.findInventoryByIds(bookId, warehouseId);
+        return new ResponseEntity<Inventory>(inventory, HttpStatus.OK);
     }
 
     @GetMapping("/warehouse/{warehouseId}")
     public ResponseEntity<List<Inventory>> getInventoryByWarehouse(@PathVariable int warehouseId) {
-        try {
-            Warehouse warehouse = new Warehouse();
-            warehouse.setWarehouseId(warehouseId);
-            List<Inventory> inventoryList = inventoryService.findInventoryByWarehouse(warehouse);
-            return new ResponseEntity<>(inventoryList, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting inventory by warehouse.",
-                    e);
-        }
+
+        // calling service method to find inventory by warehouseId
+        List<Inventory> inventoryList = inventoryService.findInventoryByWarehouse(warehouseId);
+        return new ResponseEntity<>(inventoryList, HttpStatus.OK);
     }
 
     @GetMapping("/book/{bookId}")
     public ResponseEntity<List<Inventory>> getInventoryByBook(@PathVariable int bookId) {
-        try {
-            Book book = new Book();
-            book.setBookId(bookId);
-            List<Inventory> inventoryList = inventoryService.findInventoryByBook(book);
-            return new ResponseEntity<>(inventoryList, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error getting inventory by book.", e);
-        }
+
+        // calling service method to find inventory by bookId
+        List<Inventory> inventoryList = inventoryService.findInventoryByBook(bookId);
+        return new ResponseEntity<>(inventoryList, HttpStatus.OK);
     }
 
     /*
@@ -82,37 +69,37 @@ public class InventoryController {
             @RequestParam("bookId") int bookId,
             @RequestParam("warehouseId") int warehouseId,
             @RequestParam("quantity") int quantity) {
+
+        // calling service method to create inventory
         Inventory inventory = inventoryService.createInventory(bookId, warehouseId, quantity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(inventory);
+        return new ResponseEntity<Inventory>(inventory, HttpStatus.CREATED);
     }
 
     /*
      * DELETE MAPPINGS
      */
 
+    // may be able to write another one of these with just inventory objects rather than IDs later
     @DeleteMapping("/{bookId}/{warehouseId}")
-    public ResponseEntity<Integer> deleteInventory(@PathVariable int bookId, @PathVariable int warehouseId) {
-        InventoryId inventoryId = new InventoryId(bookId, warehouseId);
-        Optional<Inventory> optionalInventory = inventoryRepository.findById(inventoryId);
-        if (!optionalInventory.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Inventory with ID " + inventoryId + " does not exist.");
-        }
+    public ResponseEntity<Integer> deleteInventory(@PathVariable int bookId,
+            @PathVariable int warehouseId) {
 
-        inventoryRepository.delete(optionalInventory.get());
-        return new ResponseEntity<Integer>(1, HttpStatus.OK);
+        // calling service method to delete inventory
+        int deleted = inventoryService.deleteInventory(bookId, warehouseId);
+        return new ResponseEntity<Integer>(deleted, HttpStatus.OK);
     }
 
     /*
      * PUT MAPPINGS
      */
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateInventory(@RequestBody Inventory inventory,
-            @RequestParam(required = false) Book book,
-            @RequestParam(required = false) Warehouse warehouse,
-            @RequestParam(required = false) int quantity) {
-        int updated = inventoryService.updateInventory(inventory, book, warehouse, quantity);
+    @PutMapping("/{bookId}/{warehouseId}/{quantity}")
+    public ResponseEntity<Integer> updateInventory(@PathVariable int bookId,
+            @PathVariable int warehouseId,
+            @PathVariable(required = false) int quantity) {
+
+        // calling service method to update inventory
+        int updated = inventoryService.updateInventory(bookId, warehouseId, quantity);
         return new ResponseEntity<Integer>(updated, HttpStatus.OK);
     }
 

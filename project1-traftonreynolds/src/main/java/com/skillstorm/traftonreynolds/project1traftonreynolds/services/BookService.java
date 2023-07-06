@@ -28,15 +28,21 @@ public class BookService {
      */
 
     public List<Book> findAllBooks() {
+        
         try {
+            // Retrieve all books from the database
             return bookRepository.findAll();
         } catch (Exception e) {
+            // If no books are found, throw an exception
             throw new EntityNotFoundException("No books found.");
         }
     }
 
     public Book findBookById(int id) {
+
+        // Retrieve the book from the database
         return bookRepository.findById(id)
+                // Throw an exception if the book does not exist
                 .orElseThrow(() -> new EntityNotFoundException("Book with ID " + id + " does not exist."));
     }
 
@@ -45,10 +51,16 @@ public class BookService {
      */
 
     public Book createBook(Book book) {
+        
+        // check if book with same isbn already exists in the database
         Optional<Book> bookOptional = bookRepository.findByIsbn(book.getIsbn());
+
+        // if book already exists, throw an exception
         if (bookOptional.isPresent()) {
             throw new DuplicateKeyException("Book with ISBN " + book.getIsbn() + " already exists.");
         }
+
+        // if book does not already exist, save it to the database
         return bookRepository.save(book);
     }
 
@@ -56,13 +68,10 @@ public class BookService {
      * DELETE MAPPINGS
      */
 
-    public Book deleteBook(Book book) {
-        Optional<Book> bookOptional = bookRepository.findByIsbn(book.getIsbn());
-        if (!bookOptional.isPresent()) {
-            throw new EntityNotFoundException("Book with ISBN " + book.getIsbn() + " does not exist.");
-        }
+    public void deleteBook(Book book) {
+
+        // Delete the book from the database
         bookRepository.delete(book);
-        return book;
     }
 
     /*
@@ -71,12 +80,14 @@ public class BookService {
 
     @Transactional
     public int updateBook(Book book, String newTitle, String newAuthor, LocalDate newPublishDate, String newIsbn) {
+
         // Retrieve the book from the database
         Optional<Book> existingBookOptional = bookRepository.findById(book.getBookId());
         if (!existingBookOptional.isPresent()) {
             throw new EntityNotFoundException("Book with ID " + book.getBookId() + " does not exist.");
         }
 
+        // Get the book from the Optional
         Book existingBook = existingBookOptional.get();
 
         // Update the book's properties if new values are provided
@@ -96,6 +107,7 @@ public class BookService {
         // Save the updated book to the database
         bookRepository.save(existingBook);
 
+        // Return 1 to indicate success
         return 1;
     }
 

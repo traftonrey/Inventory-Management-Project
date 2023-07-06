@@ -23,6 +23,7 @@ import com.skillstorm.traftonreynolds.project1traftonreynolds.services.Warehouse
 @RestController
 @RequestMapping("/warehouses")
 public class WarehouseController {
+
     @Autowired
     WarehouseService warehouseService;
 
@@ -32,15 +33,17 @@ public class WarehouseController {
     
     @GetMapping
     public ResponseEntity<List<Warehouse>> findAllWarehouses() {
-        List<Warehouse> warehouses = warehouseService.findAllWarehouses();
 
+        // calling service method to find all warehouses
+        List<Warehouse> warehouses = warehouseService.findAllWarehouses();
         return new ResponseEntity<List<Warehouse>>(warehouses, HttpStatus.OK);
     }
 
     @GetMapping("/warehouse/{id}")
     public ResponseEntity<Warehouse> findWarehouseById(@PathVariable int id) {
-        Warehouse warehouse = warehouseService.findWarehouseById(id);
 
+        // calling service method to find warehouse by id
+        Warehouse warehouse = warehouseService.findWarehouseById(id);
         return new ResponseEntity<Warehouse>(warehouse, HttpStatus.OK);
     }
 
@@ -50,8 +53,9 @@ public class WarehouseController {
 
     @PostMapping("/warehouse")
     public ResponseEntity<Warehouse> createWarehouse(@Valid @RequestBody Warehouse warehouse) {
-        Warehouse savedWarehouse = warehouseService.createWarehouse(warehouse);
 
+        // calling service method to create warehouse
+        Warehouse savedWarehouse = warehouseService.createWarehouse(warehouse);
         return new ResponseEntity<Warehouse>(savedWarehouse, HttpStatus.CREATED);
     }
 
@@ -62,9 +66,10 @@ public class WarehouseController {
 
     @DeleteMapping("/warehouse/{id}")
     public ResponseEntity<Warehouse> deleteWarehouse(@RequestBody Warehouse warehouse) {
-        Warehouse deletedWarehouse = warehouseService.deleteWarehouse(warehouse);
 
-        return new ResponseEntity<Warehouse>(deletedWarehouse, HttpStatus.OK);
+        // calling service method to delete warehouse
+        warehouseService.deleteWarehouse(warehouse);
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -79,8 +84,8 @@ public class WarehouseController {
                                                     @RequestParam(required = false) int newCapacity) {
         
         
+        // calling service method to update warehouse
         int updated = warehouseService.updateWarehouse(warehouse, newName, newCapacity);
-
         return new ResponseEntity<Integer>(updated, HttpStatus.OK);
     }
        
