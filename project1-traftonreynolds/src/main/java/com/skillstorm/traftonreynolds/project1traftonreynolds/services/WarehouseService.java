@@ -113,7 +113,7 @@ public class WarehouseService {
             existingWarehouse.setWarehouseName(newName);
         }
         if (newCapacity > 0) {
-            existingWarehouse.setMaximumCapacity(newCapacity);
+            existingWarehouse.setCapacity(newCapacity);
         } else {
             throw new IllegalArgumentException("Capacity must be a positive integer.");
         }
@@ -129,7 +129,7 @@ public class WarehouseService {
     public void updateCapacity(Warehouse warehouse, int newCapacity) {
 
         // set the new capacity
-        warehouse.setMaximumCapacity(newCapacity);
+        warehouse.setCapacity(newCapacity);
 
         // merge the warehouse
         entityManager.merge(warehouse);

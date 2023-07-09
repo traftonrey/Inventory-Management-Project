@@ -98,7 +98,7 @@ public class InventoryService {
         Book book = bookService.findBookById(bookId);
 
         // Check if the warehouse has/will have enough capacity
-        int currentCapacity = warehouse.getMaximumCapacity();
+        int currentCapacity = warehouse.getCapacity();
         int newCapacity = currentCapacity - quantity;
 
         // Throw an exception if the warehouse does not have enough capacity
@@ -142,7 +142,7 @@ public class InventoryService {
         // Retrieve warehouse object and get ready to update capacity
         Warehouse warehouse = warehouseService.findWarehouseById(warehouseId);
         int quantity = inventory.getQuantity();
-        int currentCapacity = warehouse.getMaximumCapacity();
+        int currentCapacity = warehouse.getCapacity();
         int newCapacity = currentCapacity + quantity;
 
         // Update the warehouse capacity
@@ -185,7 +185,7 @@ public class InventoryService {
             // Check if the warehouse has/will have enough capacity
             int currentQuantity = existingInventory.getQuantity();
             int quantityDifference = quantity - currentQuantity;
-            int currentCapacity = existingInventory.getWarehouse().getMaximumCapacity();
+            int currentCapacity = existingInventory.getWarehouse().getCapacity();
             int newCapacity = currentCapacity - quantityDifference;
 
             if (newCapacity < 0) {

@@ -24,8 +24,8 @@ public class Warehouse {
     @Column(name="warehouse_name")
     private String warehouseName;
 
-    @Column(name="maximum_capacity")
-    private int maximumCapacity;
+    @Column(name="capacity")
+    private int capacity;
 
     @OneToMany(mappedBy = "warehouse")
     private List<Inventory> inventory;
@@ -34,15 +34,15 @@ public class Warehouse {
 
     public Warehouse() {}
 
-    public Warehouse(String warehouseName, int maximumCapacity) {
+    public Warehouse(String warehouseName, int capacity) {
         this.warehouseName = warehouseName;
-        this.maximumCapacity = maximumCapacity;
+        this.capacity = capacity;
     }
     
-    public Warehouse(int warehouseId, String warehouseName, int maximumCapacity) {
+    public Warehouse(int warehouseId, String warehouseName, int capacity) {
         this.warehouseId = warehouseId;
         this.warehouseName = warehouseName;
-        this.maximumCapacity = maximumCapacity;
+        this.capacity = capacity;
     }
     
     // Getters and Setters
@@ -63,12 +63,12 @@ public class Warehouse {
         this.warehouseName = warehouseName;
     }
     
-    public int getMaximumCapacity() {
-        return maximumCapacity;
+    public int getCapacity() {
+        return capacity;
     }
     
-    public void setMaximumCapacity(int maximumCapacity) {
-        this.maximumCapacity = maximumCapacity;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
     
     // toString
@@ -76,7 +76,7 @@ public class Warehouse {
     @Override
     public String toString() {
         return "Warehouse [warehouseId=" + warehouseId + ", warehouseName=" + warehouseName +
-                ", maximumCapacity=" + maximumCapacity + "]";
+                ", capacity=" + capacity + "]";
     }
 
     // hashCode and equals
@@ -87,7 +87,7 @@ public class Warehouse {
         int result = 1;
         result = prime * result + warehouseId;
         result = prime * result + ((warehouseName == null) ? 0 : warehouseName.hashCode());
-        result = prime * result + maximumCapacity;
+        result = prime * result + capacity;
         return result;
     }
 
@@ -107,7 +107,7 @@ public class Warehouse {
                 return false;
         } else if (!warehouseName.equals(other.warehouseName))
             return false;
-        if (maximumCapacity != other.maximumCapacity)
+        if (capacity != other.capacity)
             return false;
         return true;
     }
