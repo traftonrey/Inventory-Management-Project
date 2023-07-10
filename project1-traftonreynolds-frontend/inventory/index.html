@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,12 +15,13 @@
         integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
         crossorigin="anonymous"></script>
 
-     <!-- CSS -->
-     <!-- <link rel="stylesheet" href="inventory.css"> -->
+    <!-- CSS -->
+    <link rel="stylesheet" href="../resources/tables.css">
 
-     <!-- JavaScript -->
-     <script defer src="inventory.js"></script>
+    <!-- JavaScript -->
+    <script defer src="inventory.js"></script>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -48,16 +50,17 @@
 
     <main>
         <div class="container-fluid">
-            <h1>Books</h1>
+            <h1>Inventory</h1>
 
             <div class="table-responsive">
                 <table class="table table-primary table-hover table-striped">
                     <thead>
                         <tr>
-                            <th>Inventory ID</th>
-                            <th>Book</th>
-                            <th>Warehouse</th>
-                            <th>Quantity</th>
+                            <th id="book-id-header" class="filter">Book ID</th>
+                            <th id="warehouse-id-header" class="filter">Warehouse ID</th>
+                            <th id="book-header" class="filter">Book</th>
+                            <th id="warehouse-header" class="filter">Warehouse</th>
+                            <th id="quantity-header" class="filter">Quantity</th>
 
                             <th>Edit</th>
                         </tr>
@@ -72,4 +75,5 @@
         </div>
     </main>
 </body>
+
 </html>
