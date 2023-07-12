@@ -1,26 +1,30 @@
-.table-responsive {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+/* tables css */
+
+/* navbar styles */
+
+.nav-container {
+    padding-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.sort-icon {
-    margin-left: 0.2rem;
-}
+/* table styles */
 
-.sort-icon::before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 0.7rem;
-    content: "\f0dc";
-    /* FontAwesome sort icon (up arrow) */
-    transition: transform 0.2s ease-in-out;
-}
-
-.sort-icon.desc::before {
-    transform: rotate(180deg);
-    /* Rotate the icon for descending order */
-}
-
+/* sets pointer to indicate filter availability on table headers */
 .filter {
     cursor: pointer;
+}
+
+.table-responsive {
+    margin-top: 2.5%;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.table {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.book-row {
+    vertical-align: middle;
 }

@@ -83,7 +83,7 @@ public class BookController {
     public ResponseEntity<Integer> updateBook(@RequestBody Book book,
                                                 @RequestParam(required = false) String newTitle,
                                                 @RequestParam(required = false) String newAuthor,
-                                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newPublishDate,
+                                                @Valid @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newPublishDate,
                                                 @RequestParam(required = false) String newIsbn
                                                 ) {
 
