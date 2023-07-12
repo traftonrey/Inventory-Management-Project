@@ -173,7 +173,6 @@ async function createWarehouse() {
         if (response.ok) {
             // Warehouse was created successfully
             await refreshTable();
-            clearForms();
         }
     } catch (error) {
         console.error("Error creating warehouse:", error);
@@ -186,17 +185,17 @@ async function saveWarehouseChanges() {
         return;
     }
 
-    const id = document.getElementById("edit-warehouse-id").value;
+    const warehouseId = document.getElementById("edit-warehouse-id").value;
     const newName = document.getElementById("edit-warehouse-name").value;
     const newCapacity = document.getElementById("edit-warehouse-capacity").value;
 
     const requestBody = {
-        warehouseId: id
+        warehouseId: warehouseId
     };
 
-    const url = URL = "warehouse/" + warehouseId +
-        "?warehouseName=" + encodeURIComponent(newName) +
-        "&capacity=" + encodeURIComponent(newCapacity);
+    const url = URL + "warehouse/" + warehouseId +
+        "?newName=" + encodeURIComponent(newName) +
+        "&newCapacity=" + encodeURIComponent(newCapacity);
 
     try {
         const response = await fetch(url, {
@@ -248,14 +247,14 @@ async function deleteWarehouse() {
 
 function openEditModal(warehouseId) {
     // Find the warehouse in the array based on the ID
-    const warehouse = allWarehouses.find((w) => w.id === warehouseId);
+    const warehouse = allWarehouses.find((w) => w.warehouseId === warehouseId);
 
     // Populate the form fields with the warehouse data
     document.getElementById("edit-warehouse-name").value = warehouse.warehouseName;
     document.getElementById("edit-warehouse-capacity").value = warehouse.capacity;
     document.getElementById("edit-warehouse-id").value = warehouseId;
 
-    // open the modal
+    // Open the edit modal
     const editModal = new bootstrap.Modal(document.getElementById("editWarehouseModal"));
     editModal.show();
 }

@@ -126,10 +126,11 @@
                                 <input type="number" class="form-control" id="edit-warehouse-capacity"
                                     placeholder="Enter warehouse capacity" required>
                             </div>
+                            <input type="hidden" id="edit-warehouse-id">
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" onclick="deleteWarehouse()">Delete</button>
+                        <button type="button" style="margin-right: auto;" class="btn btn-danger" onclick="deleteWarehouse()">Delete</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" onclick="saveWarehouseChanges()">Save
                             Changes</button>
