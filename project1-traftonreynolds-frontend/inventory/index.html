@@ -19,13 +19,14 @@
     <link rel="stylesheet" href="../resources/tables.css">
 
     <!-- JavaScript -->
+    <script defer src="../resources/shared.js"></script>
     <script defer src="inventory.js"></script>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
+            <div class="container-fluid nav-container">
                 <a class="navbar-brand" href="../index.html">Bookstore Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,10 +51,15 @@
 
     <main>
         <div class="container-fluid">
-            <h1>Inventory</h1>
+            <div id="success-message" class="success-message"></div>
+            <div class="title-section">
+                <h1 class="h1">Inventory</h1>
 
+                <button type="button" class="btn btn-primary add-button" data-bs-toggle="modal"
+                    data-bs-target="#createInventoryModal">Create Inventory</button>
+            </div>
             <div class="table-responsive">
-                <table class="table table-primary table-hover table-striped">
+                <table class="table table-class table-light">
                     <thead>
                         <tr>
                             <th id="book-id-header" class="filter">Book ID</th>
@@ -71,6 +77,77 @@
                     </tbody>
 
                 </table>
+            </div>
+        </div>
+
+        <!-- Add Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Add Inventory Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add-form">
+                            <div class="mb-3">
+                                <label for="add-name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="add-name" placeholder="Enter item name"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="add-quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="add-quantity" placeholder="Enter quantity"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="add-description" class="form-label">Description</label>
+                                <textarea class="form-control" id="add-description" placeholder="Enter description"
+                                    rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="addItem()">Add Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Inventory Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="edit-form">
+                            <input type="hidden" id="edit-item-id">
+                            <div class="mb-3">
+                                <label for="edit-name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="edit-name" placeholder="Enter item name"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="edit-quantity"
+                                    placeholder="Enter quantity" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-description" class="form-label">Description</label>
+                                <textarea class="form-control" id="edit-description" placeholder="Enter description"
+                                    rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

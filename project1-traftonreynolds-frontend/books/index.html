@@ -19,12 +19,13 @@
     <link rel="stylesheet" href="../resources/tables.css">
 
     <!-- JavaScript -->
+    <script defer src="../resources/shared.js"></script>
     <script defer src="books.js"></script>
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid nav-container">
                 <a class="navbar-brand" href="../index.html">Bookstore Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -50,10 +51,13 @@
 
     <main>
         <div class="container-fluid">
-            <h1>Books</h1>
+            <div id="success-message" class="success-message"></div>
+            <div class="title-section">
+                <h1 class="h1">Books</h1>
 
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">Create Book</button>
-
+                <button type="button" class="btn btn-primary add-button" data-bs-toggle="modal"
+                    data-bs-target="#createModal">Create Book</button>
+            </div>
             <div class="table-responsive">
                 <table class="table table-class table-light">
                     <thead>
@@ -77,7 +81,7 @@
 
         <!-- add the modal for create -->
         <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="createModalLabel">Create Book</h5>
@@ -101,7 +105,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="create-isbn" class="form-label">ISBN</label>
-                                <input type="text" class="form-control" id="create-isbn" placeholder="Enter ISBN" required>
+                                <input type="text" class="form-control" id="create-isbn" placeholder="Enter ISBN"
+                                    required>
                             </div>
                         </form>
                     </div>
@@ -116,7 +121,7 @@
 
         <!-- add the modal for edit/delete -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">Edit Book</h5>

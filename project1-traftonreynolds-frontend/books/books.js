@@ -1,4 +1,6 @@
 const URL = "http://localhost:8080/books/";
+const tableBodyId = "book-table-body";
+
 let allBooks = [];
 
 let isTitleSortedAscending = true;
@@ -6,30 +8,8 @@ let isAuthorSortedAscending = true;
 let isPublicationDateSortedAscending = true;
 let isISBNSortedAscending = true;
 
-async function refreshTable() {
-    let xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            let books = JSON.parse(xhr.responseText);
-
-            // Clear the table body
-            let tableBody = document.getElementById("book-table-body");
-            tableBody.innerHTML = "";
-
-            // populate the table
-            books.forEach((newBook) => {
-                addBook(newBook);
-            });
-        }
-    };
-
-    xhr.open("GET", URL);
-    xhr.send();
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-    refreshTable();
+    refreshTable(URL, tableBodyId, addBook);
 });
 
 function addBook(newBook) {
@@ -66,9 +46,8 @@ function addBook(newBook) {
 };
 
 async function createBook() {
-
     // validate the form data
-    if (!validateForm()) {
+    if (!validateForm("create")) {
         return;
     }
 
@@ -100,7 +79,10 @@ async function createBook() {
             // Book successfully created
             console.log('Book created successfully.');
 
-            await refreshTable();
+            await refreshTable(URL, tableBodyId, addBook);
+            clearForm('create');
+            dismissModal('create');
+            showSuccessMessage('Book created successfully!');
         }
     } catch (error) {
         // Handle network errors
@@ -111,16 +93,16 @@ async function createBook() {
 async function saveChanges() {
 
     // validate the form data
-    if (!validateForm()) {
+    if (!validateForm("edit")) {
         return;
     }
 
     // Retrieve the values from the input fields
-    const bookId = document.getElementById('edit-book-id').value;
-    const newTitle = document.getElementById('edit-title').value;
-    const newAuthor = document.getElementById('edit-author').value;
-    const newPublicationDate = document.getElementById('edit-publication-date').value;
-    const newIsbn = document.getElementById('edit-isbn').value;
+    const bookId = document.getElementById('edit-book-id').value.trim();
+    const newTitle = document.getElementById('edit-title').value.trim();
+    const newAuthor = document.getElementById('edit-author').value.trim();
+    const newPublicationDate = document.getElementById('edit-publication-date').value.trim();
+    const newIsbn = document.getElementById('edit-isbn').value.trim();
 
     // Create an object with the book ID for the request body
     const requestBody = {
@@ -148,8 +130,10 @@ async function saveChanges() {
             // Book successfully updated
             console.log('Book updated successfully.');
 
-            await refreshTable();
-
+            await refreshTable(URL, tableBodyId, addBook);
+            clearForm("edit");
+            dismissModal("edit");
+            showSuccessMessage("Book updated successfully.");
         }
     } catch (error) {
         // Handle network errors
@@ -179,7 +163,9 @@ async function deleteBook() {
             // Book successfully deleted
             console.log('Book deleted successfully.');
             
-            await refreshTable();
+            await refreshTable(URL, tableBodyId, addBook);
+            dismissModal("editModal");
+            showSuccessMessage("Book deleted successfully.");
         }
     } catch (error) {
         // Handle network errors
@@ -187,28 +173,38 @@ async function deleteBook() {
     }
 }
 
-function openEditModal(bookId) {
-    // Find the book in the allBooks array based on the bookId
-    const book = allBooks.find((b) => b.bookId === bookId);
+async function openEditModal(bookId) {
+    try {
+      // Fetch the latest book data from the server
+      const response = await fetch(`${URL}book/${bookId}`);
+      if (response.ok) {
+        const book = await response.json();
+  
+        // Populate the form fields with the updated book data
+        document.getElementById("edit-title").value = book.title;
+        document.getElementById("edit-author").value = book.author;
+        document.getElementById("edit-publication-date").value = book.publicationDate;
+        document.getElementById("edit-isbn").value = book.isbn;
+        document.getElementById("edit-book-id").value = bookId;
+  
+        // Open the edit modal
+        const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+        editModal.show();
+      } else {
+        console.error('Error retrieving book:', response.status);
+      }
+    } catch (error) {
+      console.error('Error retrieving book:', error);
+    }
+  }
+  
 
-    // Populate the form fields with the book data
-    document.getElementById("edit-title").value = book.title;
-    document.getElementById("edit-author").value = book.author;
-    document.getElementById("edit-publication-date").value = book.publicationDate;
-    document.getElementById("edit-isbn").value = book.isbn;
-    document.getElementById("edit-book-id").value = bookId;
-
-    // Open the edit modal
-    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
-    editModal.show();
-}
-
-function validateForm() {
+function validateForm(formId) {
     // Get the values of the input fields
-    const title = document.getElementById("edit-title").value.trim();
-    const author = document.getElementById("edit-author").value.trim();
-    const publicationDate = document.getElementById("edit-publication-date").value.trim();
-    const isbn = document.getElementById("edit-isbn").value.trim();
+    const title = document.getElementById(formId + "-title").value;
+    const author = document.getElementById(formId + "-author").value;
+    const publicationDate = document.getElementById(formId + "-publication-date").value;
+    const isbn = document.getElementById(formId + "-isbn").value;
 
     // Check if any of the fields are blank or contain only whitespace
     if (title === "" || author === "" || publicationDate === "" || isbn === "") {
@@ -216,8 +212,25 @@ function validateForm() {
         return false; // Prevent form submission
     }
 
+    if (!isValidISBNFormat(isbn)) {
+        alert("Please enter a valid ISBN.");
+        return;
+    }
+
     return true; // Allow form submission
 }
+
+function isValidISBNFormat(isbn) {
+    // Remove any hyphens from the entered ISBN
+    const cleanedISBN = isbn.replace(/-/g, "");
+  
+    // ISBN-10 format: 10 digits ending with a check digit (0-9 or 'X')
+    // ISBN-13 format: 13 digits starting with a valid prefix (978 or 979) followed by 10 digits ending with a check digit (0-9)
+    const isbn10Pattern = /^\d{9}[\d|X]$/;
+    const isbn13Pattern = /^(978|979)\d{10}$/;
+  
+    return isbn10Pattern.test(cleanedISBN) || isbn13Pattern.test(cleanedISBN);
+  }
 
 function sortTableBy(columnName) {
     let tableBody = document.getElementById("book-table-body");

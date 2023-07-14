@@ -19,12 +19,13 @@
     <link rel="stylesheet" href="../resources/tables.css">
 
     <!-- JavaScript -->
+    <script defer src="../resources/shared.js"></script>
     <script defer src="warehouses.js"></script>
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid nav-container">
                 <a class="navbar-brand" href="../index.html">Bookstore Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -50,10 +51,12 @@
 
     <main>
         <div class="container-fluid">
-            <h1>Warehouses</h1>
+            <div id="success-message" class="success-message"></div>
+            <div class="title-section">
+                <h1 class="h1">Warehouses</h1>
 
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createWarehouseModal">Create Warehouse</button>
-
+                <button type="button" class="btn btn-primary add-button" data-bs-toggle="modal" data-bs-target="#createWarehouseModal">Create Warehouse</button>
+            </div>
             <div class="table-responsive">
                 <table class="table table-class table-light">
                     <thead>
@@ -76,7 +79,7 @@
         <!-- Add Warehouse Modal -->
         <div class="modal fade" id="createWarehouseModal" tabindex="-1" aria-labelledby="createWarehouseModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="createWarehouseModalLabel">Create Warehouse</h5>
@@ -108,7 +111,7 @@
         <!-- Edit Warehouse Modal -->
         <div class="modal fade" id="editWarehouseModal" tabindex="-1" aria-labelledby="editWarehouseModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editWarehouseModalLabel">Edit Warehouse</h5>
