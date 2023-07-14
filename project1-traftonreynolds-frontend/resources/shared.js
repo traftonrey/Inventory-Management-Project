@@ -1,4 +1,4 @@
-// common.js
+// shared.js
 
 // Function to clear a form
 function clearForm(formId) {

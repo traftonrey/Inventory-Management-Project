@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.skillstorm.traftonreynolds.project1traftonreynolds.models.Warehouse;
+import com.skillstorm.traftonreynolds.project1traftonreynolds.repositories.InventoryRepository;
 import com.skillstorm.traftonreynolds.project1traftonreynolds.repositories.WarehouseRepository;
 
 @Service
@@ -20,6 +21,9 @@ public class WarehouseService {
 
     @Autowired
     WarehouseRepository warehouseRepository;
+
+    @Autowired
+    InventoryRepository inventoryRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -75,7 +79,7 @@ public class WarehouseService {
     /*
      * DELETE MAPPINGS
      */
-    
+    @Transactional
     public void deleteWarehouse(Warehouse warehouse) {
 
         // Check if the warehouse exists
@@ -85,6 +89,9 @@ public class WarehouseService {
         if (!warehouseOptional.isPresent()) {
             throw new EntityNotFoundException("Warehouse with ID " + warehouse.getWarehouseId() + " does not exist.");
         }
+
+        // Delete all inventory items associated with the warehouse
+        inventoryRepository.deleteByWarehouseWarehouseId(warehouse.getWarehouseId());
 
         // Delete the warehouse
         warehouseRepository.delete(warehouse);

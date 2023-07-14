@@ -1,4 +1,6 @@
 const URL = "http://localhost:8080/inventory/";
+const tableBodyId = "inventory-table-body";
+
 let allInventory = [];
 
 let isBookIdSortedAscending = true;
@@ -8,21 +10,7 @@ let isWarehouseSortedAscending = true;
 let isQuantitySortedAscending = true;
 
 document.addEventListener("DOMContentLoaded", () => {
-    let xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            let inventory = JSON.parse(xhr.responseText);
-
-            inventory.forEach((newInventory) => {
-                addInventory(newInventory);
-            });
-        }
-    };
-
-    xhr.open("GET", URL);
-    xhr.send();
-
+    refreshTable(URL, tableBodyId, addInventory);
 });
 
 function addInventory(newInventory) {
@@ -42,8 +30,7 @@ function addInventory(newInventory) {
     warehouse.innerText = newInventory.warehouse.warehouseName;
     quantity.innerText = newInventory.quantity;
 
-    editBtn.innerHTML =
-    `<button class='btn btn-primary' id='edit-button'>Edit</button>`;
+    editBtn.innerHTML = `<button class='btn btn-primary' onclick='openEditModal(${newInventory.id.bookId}, ${newInventory.id.warehouseId})'>Edit</button>`;
 
     tr.appendChild(bookId);
     tr.appendChild(warehouseId);
@@ -54,12 +41,159 @@ function addInventory(newInventory) {
     tr.appendChild(editBtn);
 
     tr.setAttribute("id", "TR" + newInventory.id);
+    tr.setAttribute("class", "inventory-row");
 
     document.getElementById("inventory-table-body").appendChild(tr);
 
     allInventory.push(newInventory);
 
 };
+
+async function createInventory() {
+    // Validate the form data
+    if (!validateForm("create")) {
+        return;
+    }
+
+    // Retrieve the values from the input fields
+    const bookId = document.getElementById("create-book-id").value;
+    const warehouseId = document.getElementById("create-warehouse-id").value;
+    const quantity = document.getElementById("create-quantity").value;
+
+    const url = `${URL}?bookId=${bookId}&warehouseId=${warehouseId}&quantity=${quantity}`;
+
+    try {
+        // Send a POST request to create a new inventory item
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            // Inventory successfully created
+            await refreshTable(URL, tableBodyId, addInventory);
+            clearForm("add");
+            dismissModal("addInventory");
+            showSuccessMessage("Inventory successfully created!");
+        }
+    } catch (error) {
+        console.log('Error creating inventory:', error);
+    }
+}
+
+async function updateInventory() {
+    // Validate the form data
+    if (!validateForm("edit")) {
+        return;
+    }
+
+    // Retrieve the values from the input fields
+    const bookId = document.getElementById("edit-book-id").value;
+    const warehouseId = document.getElementById("edit-warehouse-id").value;
+
+    const quantity = document.getElementById("edit-quantity").value;
+
+    const url = URL + bookId + "/" + warehouseId + "/" + quantity;
+
+    try {
+        // Send a PUT request to update the inventory item
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            // Inventory successfully updated
+            console.log("Inventory successfully updated");
+
+            await refreshTable(URL, tableBodyId, addInventory);
+            clearForm("edit");
+            dismissModal("edit");
+            showSuccessMessage("Inventory successfully updated!");
+        }
+    } catch (error) {
+        console.log('Error updating inventory:', error);
+    }
+};
+
+async function deleteInventory() {
+    try {
+        // Retrieve the book and warehouse IDs from the input fields
+        const bookId = document.getElementById("edit-book-id").value;
+        const warehouseId = document.getElementById("edit-warehouse-id").value;
+
+        // Send a DELETE request to delete the inventory item
+        const response = await fetch(`${URL}${bookId}/${warehouseId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+
+        if (response.ok) {
+            // Inventory successfully deleted
+            console.log("Inventory successfully deleted");
+
+            await refreshTable(URL, tableBodyId, addInventory);
+            clearForm("edit");
+            dismissModal("edit");
+            showSuccessMessage("Inventory successfully deleted!");
+        }
+    } catch (error) {
+        console.log('Error deleting inventory:', error);
+    }
+};
+
+async function openEditModal(bookId, warehouseId) {
+    try {
+        // fetch the latest inventory data from the server
+        const response = await fetch(`${URL}${Number(bookId)}/${Number(warehouseId)}`);
+
+        if (response.ok) {
+            // Inventory successfully retrieved
+            const inventory = await response.json();
+
+            // Populate the input fields with the updated inventory data
+            document.getElementById("edit-book-id").value = inventory.id.bookId;
+            document.getElementById("edit-warehouse-id").value = inventory.id.warehouseId;
+            document.getElementById("edit-quantity").value = inventory.quantity;
+            document.getElementById("edit-book-bookName").value = inventory.book.title;
+            document.getElementById("edit-warehouse-warehouseName").value = inventory.warehouse.warehouseName;
+
+            // Open the edit modal
+            const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+            editModal.show();
+        } else {
+            console.error('Error retrieving inventory:', response.status);
+        }
+    } catch (error) {
+        console.log('Error opening edit modal:', error);
+    }
+};
+
+function validateForm(formId) {
+    // Get the values of the input fields
+    const bookId = document.getElementById(formId + "-book-id").value;
+    const warehouseId = document.getElementById(formId + "-warehouse-id").value;
+    const quantity = document.getElementById(formId + "-quantity").value;
+
+    // Check if any of the input fields are empty or only contain whitespace
+    if (bookId.trim() === "" || warehouseId.trim() === "" || quantity.trim() === "") {
+        alert("Please fill out all fields!");
+        return false;
+    }
+
+    if (quantity < 0) {
+        alert("Quantity cannot be negative!");
+        return false;
+    }
+
+    return true;
+}
 
 function sortTableBy(columnName) {
     let tableBody = document.getElementById("inventory-table-body");

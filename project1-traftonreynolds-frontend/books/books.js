@@ -164,7 +164,8 @@ async function deleteBook() {
             console.log('Book deleted successfully.');
             
             await refreshTable(URL, tableBodyId, addBook);
-            dismissModal("editModal");
+            clearForm("edit");
+            dismissModal("edit");
             showSuccessMessage("Book deleted successfully.");
         }
     } catch (error) {

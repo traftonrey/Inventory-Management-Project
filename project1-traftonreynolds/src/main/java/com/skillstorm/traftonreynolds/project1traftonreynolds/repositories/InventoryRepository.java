@@ -20,4 +20,10 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     Optional<List<Inventory>> findByBook(Book book);
 
+    void deleteByWarehouseWarehouseId(int warehouseId);
+
+    void deleteByBookBookId(int bookId);
+
+    Optional<Book> findByBookBookId(int bookId);
+
 }
